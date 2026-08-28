@@ -1,8 +1,14 @@
+package fitbot;
+
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.util.Locale;
 import java.util.Scanner;
+
+import fitbot.command.CommandResult;
+import fitbot.command.ParsedCommand;
+import fitbot.exception.FitBotException;
 
 /**
  * Entry point for the FitBot fitness tracker application.
@@ -20,6 +26,9 @@ public class FitBot {
     /** Text displayed between user input and FitBot's responses. */
     private static final String SEPARATOR = "============================================================";
 
+    /**
+     * Displays FitBot's startup banner, including the current day of the week.
+     */
     public void showGreeting() {
         LocalDate today = LocalDate.now();
         DayOfWeek dayEnum = today.getDayOfWeek();
@@ -32,20 +41,30 @@ public class FitBot {
         System.out.println(SEPARATOR);
     }
 
+    /**
+     * Starts the command-line interaction loop and executes recognised commands
+     * until the input ends or a command requests that the application exit.
+     */
     public void start() {
         Scanner sc = new Scanner(System.in);
 
         showGreeting();
         while (sc.hasNextLine()) {
-            String command = sc.nextLine();
+            String input = sc.nextLine().trim();
             System.out.println(SEPARATOR);
 
-            if (command.equals("bye")) {
-                System.out.println("See you soon! Until then, stay fit!");
+            try {
+                ParsedCommand parsedCommand = Parser.parseCommand(input);
+                CommandResult result = parsedCommand.getCommand()
+                        .execute(parsedCommand.getArguments());
+                System.out.println(result.getMessage());
                 System.out.println(SEPARATOR);
-                break;
-            } else {
-                System.out.println("FitBot says: " + command);
+
+                if (result.shouldExit()) {
+                    break;
+                }
+            } catch (FitBotException exception) {
+                System.out.println(exception.getMessage());
                 System.out.println(SEPARATOR);
             }
         }
