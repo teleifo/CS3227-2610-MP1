@@ -3,6 +3,7 @@ package fitbot.command;
 import java.util.List;
 
 import fitbot.exception.FitBotException;
+import fitbot.model.Workout;
 
 /**
  * Defines the common interface for commands supported by FitBot.
@@ -50,9 +51,11 @@ public abstract class Command {
      * Runs the command.
      *
      * @param arguments arguments supplied after the command keyword
+     * @param workouts the application's in-memory workout list
      * @return the command's output and whether the application should exit
      * @throws FitBotException if the arguments are invalid
      */
-    public abstract CommandResult execute(List<String> arguments)
+    public abstract CommandResult execute(List<String> arguments,
+            List<Workout> workouts)
             throws FitBotException;
 }

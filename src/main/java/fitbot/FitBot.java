@@ -3,12 +3,16 @@ package fitbot;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 
 import fitbot.command.CommandResult;
 import fitbot.command.ParsedCommand;
 import fitbot.exception.FitBotException;
+import fitbot.model.Workout;
+import fitbot.parser.Parser;
 
 /**
  * Entry point for the FitBot fitness tracker application.
@@ -25,6 +29,9 @@ public class FitBot {
 
     /** Text displayed between user input and FitBot's responses. */
     private static final String SEPARATOR = "============================================================";
+
+    /** Workouts logged during this application run. */
+    private final List<Workout> workouts = new ArrayList<>();
 
     /**
      * Displays FitBot's startup banner, including the current day of the week.
@@ -56,7 +63,7 @@ public class FitBot {
             try {
                 ParsedCommand parsedCommand = Parser.parseCommand(input);
                 CommandResult result = parsedCommand.getCommand()
-                        .execute(parsedCommand.getArguments());
+                        .execute(parsedCommand.getArguments(), workouts);
                 System.out.println(result.getMessage());
                 System.out.println(SEPARATOR);
 

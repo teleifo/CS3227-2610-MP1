@@ -1,4 +1,4 @@
-package fitbot;
+package fitbot.parser;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -7,16 +7,22 @@ import java.util.Map;
 
 import fitbot.command.ByeCommand;
 import fitbot.command.Command;
+import fitbot.command.ListWorkoutsCommand;
+import fitbot.command.LogWorkoutCommand;
 import fitbot.command.ParsedCommand;
 import fitbot.exception.FitBotException;
 
-/** Converts user input strings into executable commands and arguments. */
+/**
+ * Converts user input strings into executable commands and arguments.
+ */
 public class Parser {
     /** Commands indexed by their keywords. */
     private static final Map<String, Command> commands = new HashMap<>();
 
     static {
         registerCommand(new ByeCommand());
+        registerCommand(new LogWorkoutCommand());
+        registerCommand(new ListWorkoutsCommand());
     }
 
     /** Adds a command to the parser's command registry. */

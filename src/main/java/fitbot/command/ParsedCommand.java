@@ -2,7 +2,9 @@ package fitbot.command;
 
 import java.util.List;
 
-/** Stores a command together with the arguments supplied by the user. */
+/**
+ * Stores a command together with the arguments supplied by the user.
+ */
 public final class ParsedCommand {
     /** The command identified by the parser. */
     private final Command command;
