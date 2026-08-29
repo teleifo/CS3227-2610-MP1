@@ -1,7 +1,11 @@
 package fitbot.command;
 
 import java.util.List;
+import java.util.Locale;
 
+import fitbot.formatter.DurationFormatter;
+import fitbot.model.CycleWorkout;
+import fitbot.model.RunWorkout;
 import fitbot.model.Workout;
 
 /**
@@ -23,14 +27,15 @@ public class ListWorkoutsCommand extends Command {
         for (Workout workout : workouts) {
             output.append(workout.getType())
                     .append(" - ").append(workout.getDate())
-                    .append(" - ").append(workout.getDurationSeconds())
-                    .append(" seconds");
+                    .append(" - ").append(DurationFormatter.formatDuration(workout.getDurationSeconds()));
 
-            if (workout instanceof fitbot.model.RunWorkout run) {
+            if (workout instanceof RunWorkout run) {
                 output.append(" - ").append(run.getDistanceKilometres()).append(" km");
+                output.append(" - ").append(formatPace(run)).append(" min/km");
                 appendElevation(output, run.getElevationGainMetres());
-            } else if (workout instanceof fitbot.model.CycleWorkout cycle) {
+            } else if (workout instanceof CycleWorkout cycle) {
                 output.append(" - ").append(cycle.getDistanceKilometres()).append(" km");
+                output.append(" - ").append(formatSpeed(cycle)).append(" km/hr");
                 appendElevation(output, cycle.getElevationGainMetres());
             }
             output.append("\n");
@@ -41,7 +46,16 @@ public class ListWorkoutsCommand extends Command {
 
     private static void appendElevation(StringBuilder output, Double elevation) {
         if (elevation != null) {
-            output.append(" - ").append(elevation).append(" m elevation");
+            output.append(" - ").append(elevation).append(" m elevation gain");
         }
+    }
+
+    private static String formatPace(RunWorkout workout) {
+        long totalSeconds = Math.round(workout.getPaceSecondsPerKilometre());
+        return DurationFormatter.formatDuration(totalSeconds);
+    }
+
+    private static String formatSpeed(CycleWorkout workout) {
+        return String.format(Locale.ROOT, "%.1f", workout.getSpeedKilometresPerHour());
     }
 }

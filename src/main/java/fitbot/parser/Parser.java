@@ -1,12 +1,15 @@
 package fitbot.parser;
 
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import fitbot.command.ByeCommand;
 import fitbot.command.Command;
+import fitbot.command.HelpCommand;
 import fitbot.command.ListWorkoutsCommand;
 import fitbot.command.LogWorkoutCommand;
 import fitbot.command.ParsedCommand;
@@ -17,17 +20,23 @@ import fitbot.exception.FitBotException;
  */
 public class Parser {
     /** Commands indexed by their keywords. */
-    private static final Map<String, Command> commands = new HashMap<>();
+    private static final Map<String, Command> commands = new LinkedHashMap<>();
 
     static {
-        registerCommand(new ByeCommand());
+        registerCommand(new HelpCommand());
         registerCommand(new LogWorkoutCommand());
         registerCommand(new ListWorkoutsCommand());
+        registerCommand(new ByeCommand());
     }
 
     /** Adds a command to the parser's command registry. */
     private static void registerCommand(Command command) {
         commands.put(command.getKeyword(), command);
+    }
+
+    /** Returns the registered commands without exposing the mutable registry. */
+    public static Collection<Command> getCommands() {
+        return Collections.unmodifiableCollection(commands.values());
     }
 
     /**

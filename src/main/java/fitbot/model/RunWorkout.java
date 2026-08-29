@@ -29,6 +29,15 @@ public class RunWorkout extends Workout {
         return elevationGainMetres;
     }
 
+    /**
+     * Calculates the average running pace in seconds per kilometre.
+     *
+     * @return average pace in seconds per kilometre
+     */
+    public double getPaceSecondsPerKilometre() {
+        return getDurationSeconds() / distanceKilometres;
+    }
+
     public static Set<String> getSupportedOptions() {
         return SUPPORTED_OPTIONS;
     }

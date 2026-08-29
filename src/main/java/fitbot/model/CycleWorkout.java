@@ -29,6 +29,15 @@ public class CycleWorkout extends Workout {
         return elevationGainMetres;
     }
 
+    /**
+     * Calculates the average cycling speed in kilometres per hour.
+     *
+     * @return average speed in kilometres per hour
+     */
+    public double getSpeedKilometresPerHour() {
+        return distanceKilometres / (getDurationSeconds() / 3600.0);
+    }
+
     public static Set<String> getSupportedOptions() {
         return SUPPORTED_OPTIONS;
     }
