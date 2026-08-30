@@ -24,8 +24,10 @@ public class ListWorkoutsCommand extends Command {
         }
 
         StringBuilder output = new StringBuilder();
-        for (Workout workout : workouts) {
-            output.append(workout.getType())
+        for (int index = 0; index < workouts.size(); index++) {
+            Workout workout = workouts.get(index);
+            output.append(index + 1).append(". ")
+                    .append(workout.getType())
                     .append(" - ").append(workout.getDate())
                     .append(" - ").append(DurationFormatter.formatDuration(workout.getDurationSeconds()));
 
