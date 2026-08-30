@@ -1,6 +1,7 @@
 package fitbot.command;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -27,6 +28,19 @@ public class LogWorkoutCommand extends Command {
             throws FitBotException {
         Map<String, String> options = ArgumentParser.parseOptions(arguments);
 
+        Set<String> allSupportedOptions = new HashSet<>(RunWorkout.getSupportedOptions());
+        allSupportedOptions.addAll(CycleWorkout.getSupportedOptions());
+        for (String option : options.keySet()) {
+            if (!allSupportedOptions.contains(option)) {
+                throw new FitBotException("Unknown option: " + option + ".");
+            }
+        }
+        for (Map.Entry<String, String> option : options.entrySet()) {
+            if (option.getValue() == null) {
+                throw new FitBotException("Missing value for " + option.getKey() + ".");
+            }
+        }
+
         String typeText = ArgumentParser.getRequiredOption(options, "-type");
         WorkoutType type;
         try {
@@ -50,6 +64,11 @@ public class LogWorkoutCommand extends Command {
         for (String option : options.keySet()) {
             if (!supportedOptions.contains(option)) {
                 throw new FitBotException("Unknown option: " + option + ".");
+            }
+        }
+        for (Map.Entry<String, String> option : options.entrySet()) {
+            if (option.getValue() == null) {
+                throw new FitBotException("Missing value for " + option.getKey() + ".");
             }
         }
 

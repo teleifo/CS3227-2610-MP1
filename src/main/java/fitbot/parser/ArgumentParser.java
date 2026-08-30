@@ -2,7 +2,7 @@ package fitbot.parser;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,8 +14,9 @@ import fitbot.exception.FitBotException;
 public final class ArgumentParser {
     /** Converts alternating option names and values into a map. */
     public static Map<String, String> parseOptions(List<String> arguments) throws FitBotException {
-        Map<String, String> options = new HashMap<>();
-        for (int index = 0; index < arguments.size(); index += 2) {
+        Map<String, String> options = new LinkedHashMap<>();
+        int index = 0;
+        while (index < arguments.size()) {
             String option = arguments.get(index);
             if (!option.startsWith("-")) {
                 throw new FitBotException(
@@ -25,14 +26,19 @@ public final class ArgumentParser {
                 throw new FitBotException("Duplicate option: " + option + ".");
             }
             if (index + 1 >= arguments.size()) {
-                throw new FitBotException("Missing value for " + option + ".");
+                options.put(option, null);
+                index++;
+                continue;
             }
 
             String value = arguments.get(index + 1);
             if (isOptionToken(value)) {
-                throw new FitBotException("Missing value for " + option + ".");
+                options.put(option, null);
+                index++;
+                continue;
             }
             options.put(option, value);
+            index += 2;
         }
 
         return options;
