@@ -30,13 +30,23 @@ public class ListWorkoutsCommand extends Command {
                     .append(" - ").append(DurationFormatter.formatDuration(workout.getDurationSeconds()));
 
             if (workout instanceof RunWorkout run) {
-                output.append(" - ").append(run.getDistanceKilometres()).append(" km");
-                output.append(" - ").append(formatPace(run)).append("/km");
-                appendElevation(output, run.getElevationGainMetres());
+                output.append(" - ").append(formatDistance(run.getDistanceKilometres())).append(" km");
+                output.append(" - ").append(formatPace(run.getPaceSecondsPerKilometre())).append("/km");
+                if (run.getElevationGainMetres() != null) {
+                    output.append(" - ").append(formatElevation(run.getElevationGainMetres()))
+                            .append(" m elevation gain");
+                }
             } else if (workout instanceof CycleWorkout cycle) {
-                output.append(" - ").append(cycle.getDistanceKilometres()).append(" km");
-                output.append(" - ").append(formatSpeed(cycle)).append(" km/hr");
-                appendElevation(output, cycle.getElevationGainMetres());
+                output.append(" - ").append(formatDistance(cycle.getDistanceKilometres())).append(" km");
+                output.append(" - ").append(formatSpeed(cycle.getSpeedKilometresPerHour())).append(" km/hr");
+                if (cycle.getElevationGainMetres() != null) {
+                    output.append(" - ").append(formatElevation(cycle.getElevationGainMetres()))
+                            .append(" m elevation gain");
+                }
+                if (cycle.getMaxSpeedKilometresPerHour() != null) {
+                    output.append(" - max ").append(formatSpeed(cycle.getMaxSpeedKilometresPerHour()))
+                            .append(" km/hr");
+                }
             }
             output.append("\n");
         }
@@ -44,18 +54,20 @@ public class ListWorkoutsCommand extends Command {
         return new CommandResult(output.toString().trim(), false);
     }
 
-    private static void appendElevation(StringBuilder output, Double elevation) {
-        if (elevation != null) {
-            output.append(" - ").append(elevation).append(" m elevation gain");
-        }
+    private static String formatDistance(double distance) {
+        return String.format(Locale.ROOT, "%.2f", distance);
     }
 
-    private static String formatPace(RunWorkout workout) {
-        long totalSeconds = Math.round(workout.getPaceSecondsPerKilometre());
+    private static String formatElevation(double value) {
+        return String.format(Locale.ROOT, "%.1f", value);
+    }
+
+    private static String formatPace(double pace) {
+        long totalSeconds = Math.round(pace);
         return DurationFormatter.formatDuration(totalSeconds);
     }
 
-    private static String formatSpeed(CycleWorkout workout) {
-        return String.format(Locale.ROOT, "%.1f", workout.getSpeedKilometresPerHour());
+    private static String formatSpeed(double speed) {
+        return String.format(Locale.ROOT, "%.1f", speed);
     }
 }

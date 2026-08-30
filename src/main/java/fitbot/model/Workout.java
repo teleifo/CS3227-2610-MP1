@@ -1,8 +1,11 @@
 package fitbot.model;
 
 import java.time.LocalDate;
+import java.util.Map;
 
-/** Stores information shared by all workout types. */
+/**
+ * Stores information shared by all workout types.
+ */
 public abstract class Workout {
     private final LocalDate date;
     private final long durationSeconds;
@@ -23,4 +26,7 @@ public abstract class Workout {
 
     /** Returns a display name for this workout type. */
     public abstract String getType();
+
+    /** Returns additional fields that this workout type stores in JSON. */
+    public abstract Map<String, Object> getStorageFields();
 }

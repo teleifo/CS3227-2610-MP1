@@ -10,6 +10,9 @@ public final class CommandResult {
     /** Whether FitBot should terminate after displaying the message. */
     private final boolean shouldExit;
 
+    /** Whether the command changed data that should be persisted. */
+    private final boolean dataModified;
+
     /**
      * Creates a command result.
      *
@@ -17,8 +20,20 @@ public final class CommandResult {
      * @param shouldExit whether the application should terminate
      */
     public CommandResult(String message, boolean shouldExit) {
+        this(message, shouldExit, false);
+    }
+
+    /**
+     * Creates a result with an explicit persistence flag.
+     *
+     * @param message text that should be shown to the user
+     * @param shouldExit whether the application should terminate
+     * @param dataModified whether data that should be persisted was changed
+     */
+    public CommandResult(String message, boolean shouldExit, boolean dataModified) {
         this.message = message;
         this.shouldExit = shouldExit;
+        this.dataModified = dataModified;
     }
 
     /**
@@ -37,5 +52,10 @@ public final class CommandResult {
      */
     public boolean shouldExit() {
         return shouldExit;
+    }
+
+    /** Indicates whether the command changed application data. */
+    public boolean wasDataModified() {
+        return dataModified;
     }
 }

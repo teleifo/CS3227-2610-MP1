@@ -1,6 +1,8 @@
 package fitbot.model;
 
 import java.time.LocalDate;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -9,16 +11,18 @@ import java.util.Set;
 public class CycleWorkout extends Workout {
     /** Options accepted when logging a cycle. */
     private static final Set<String> SUPPORTED_OPTIONS = Set.of(
-            "-type", "-date", "-duration", "-distance", "-elevation");
+            "-type", "-date", "-duration", "-distance", "-elevation", "-max");
     private final double distanceKilometres;
     private final Double elevationGainMetres;
+    private final Double maxSpeedKilometresPerHour;
 
     /** Creates a cycling workout. */
-    public CycleWorkout(LocalDate date, long durationSeconds,
-            double distanceKilometres, Double elevationGainMetres) {
+    public CycleWorkout(LocalDate date, long durationSeconds, double distanceKilometres,
+            Double elevationGainMetres, Double maxSpeedKilometresPerHour) {
         super(date, durationSeconds);
         this.distanceKilometres = distanceKilometres;
         this.elevationGainMetres = elevationGainMetres;
+        this.maxSpeedKilometresPerHour = maxSpeedKilometresPerHour;
     }
 
     public double getDistanceKilometres() {
@@ -27,6 +31,14 @@ public class CycleWorkout extends Workout {
 
     public Double getElevationGainMetres() {
         return elevationGainMetres;
+    }
+
+    public Double getMaxSpeedKilometresPerHour() {
+        return maxSpeedKilometresPerHour;
+    }
+
+    public static Set<String> getSupportedOptions() {
+        return SUPPORTED_OPTIONS;
     }
 
     /**
@@ -38,12 +50,17 @@ public class CycleWorkout extends Workout {
         return distanceKilometres / (getDurationSeconds() / 3600.0);
     }
 
-    public static Set<String> getSupportedOptions() {
-        return SUPPORTED_OPTIONS;
-    }
-
     @Override
     public String getType() {
         return "CYCLE";
+    }
+
+    @Override
+    public Map<String, Object> getStorageFields() {
+        Map<String, Object> fields = new LinkedHashMap<>();
+        fields.put("distanceKilometres", distanceKilometres);
+        fields.put("elevationGainMetres", elevationGainMetres);
+        fields.put("maxSpeedKilometresPerHour", maxSpeedKilometresPerHour);
+        return fields;
     }
 }

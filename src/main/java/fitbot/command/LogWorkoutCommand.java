@@ -80,12 +80,17 @@ public class LogWorkoutCommand extends Command {
                 ArgumentParser.getRequiredOption(options, "-distance"), "distance");
         Double elevation = options.containsKey("-elevation")
                 ? ArgumentParser.parseDouble(options.get("-elevation"), "elevation") : null;
+        Double maxSpeed = options.containsKey("-max")
+                ? ArgumentParser.parseDouble(options.get("-max"), "max speed") : null;
 
         if (duration <= 0 || distance <= 0) {
             throw new FitBotException("Duration and distance must be positive.");
         }
         if (elevation != null && elevation < 0) {
             throw new FitBotException("Elevation cannot be negative.");
+        }
+        if (maxSpeed != null && maxSpeed <= 0) {
+            throw new FitBotException("Maximum speed must be positive.");
         }
 
         Workout workout;
@@ -95,7 +100,7 @@ public class LogWorkoutCommand extends Command {
             break;
 
         case CYCLE:
-            workout = new CycleWorkout(date, duration, distance, elevation);
+            workout = new CycleWorkout(date, duration, distance, elevation, maxSpeed);
             break;
 
         default:
@@ -103,6 +108,6 @@ public class LogWorkoutCommand extends Command {
         }
         workouts.add(workout);
 
-        return new CommandResult("Workout logged successfully.", false);
+        return new CommandResult("Workout logged successfully.", false, true);
     }
 }

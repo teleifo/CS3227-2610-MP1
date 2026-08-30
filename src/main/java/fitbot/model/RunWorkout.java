@@ -1,6 +1,8 @@
 package fitbot.model;
 
 import java.time.LocalDate;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -14,8 +16,8 @@ public class RunWorkout extends Workout {
     private final Double elevationGainMetres;
 
     /** Creates a running workout. */
-    public RunWorkout(LocalDate date, long durationSeconds,
-            double distanceKilometres, Double elevationGainMetres) {
+    public RunWorkout(LocalDate date, long durationSeconds, double distanceKilometres,
+            Double elevationGainMetres) {
         super(date, durationSeconds);
         this.distanceKilometres = distanceKilometres;
         this.elevationGainMetres = elevationGainMetres;
@@ -29,6 +31,10 @@ public class RunWorkout extends Workout {
         return elevationGainMetres;
     }
 
+    public static Set<String> getSupportedOptions() {
+        return SUPPORTED_OPTIONS;
+    }
+
     /**
      * Calculates the average running pace in seconds per kilometre.
      *
@@ -38,12 +44,16 @@ public class RunWorkout extends Workout {
         return getDurationSeconds() / distanceKilometres;
     }
 
-    public static Set<String> getSupportedOptions() {
-        return SUPPORTED_OPTIONS;
-    }
-
     @Override
     public String getType() {
         return "RUN";
+    }
+
+    @Override
+    public Map<String, Object> getStorageFields() {
+        Map<String, Object> fields = new LinkedHashMap<>();
+        fields.put("distanceKilometres", distanceKilometres);
+        fields.put("elevationGainMetres", elevationGainMetres);
+        return fields;
     }
 }

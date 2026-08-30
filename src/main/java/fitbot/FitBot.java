@@ -1,9 +1,9 @@
 package fitbot;
 
+import java.nio.file.Path;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
@@ -13,6 +13,7 @@ import fitbot.command.ParsedCommand;
 import fitbot.exception.FitBotException;
 import fitbot.model.Workout;
 import fitbot.parser.Parser;
+import fitbot.storage.WorkoutStorage;
 
 /**
  * Entry point for the FitBot fitness tracker application.
@@ -31,7 +32,17 @@ public class FitBot {
     private static final String SEPARATOR = "============================================================";
 
     /** Workouts logged during this application run. */
-    private final List<Workout> workouts = new ArrayList<>();
+    private final List<Workout> workouts;
+    private final WorkoutStorage storage = new WorkoutStorage(Path.of("data", "workouts.json"));
+
+    /** Creates FitBot and loads previously saved workouts. */
+    public FitBot() {
+        try {
+            workouts = storage.loadWorkouts();
+        } catch (FitBotException exception) {
+            throw new IllegalStateException(exception.getMessage(), exception);
+        }
+    }
 
     /**
      * Displays FitBot's startup banner, including the current day of the week.
@@ -66,6 +77,10 @@ public class FitBot {
                         .execute(parsedCommand.getArguments(), workouts);
                 System.out.println(result.getMessage());
                 System.out.println(SEPARATOR);
+
+                if (result.wasDataModified()) {
+                    storage.saveWorkouts(workouts);
+                }
 
                 if (result.shouldExit()) {
                     break;
