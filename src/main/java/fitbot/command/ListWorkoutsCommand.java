@@ -31,7 +31,7 @@ public class ListWorkoutsCommand extends Command {
 
             if (workout instanceof RunWorkout run) {
                 output.append(" - ").append(run.getDistanceKilometres()).append(" km");
-                output.append(" - ").append(formatPace(run)).append(" min/km");
+                output.append(" - ").append(formatPace(run)).append("/km");
                 appendElevation(output, run.getElevationGainMetres());
             } else if (workout instanceof CycleWorkout cycle) {
                 output.append(" - ").append(cycle.getDistanceKilometres()).append(" km");

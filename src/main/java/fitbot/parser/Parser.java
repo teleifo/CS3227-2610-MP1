@@ -1,6 +1,6 @@
 package fitbot.parser;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -49,13 +49,62 @@ public class Parser {
             throw new FitBotException("Input cannot be empty.");
         }
 
-        String[] words = input.trim().split("\\s+");
-        Command command = commands.get(words[0]);
+        List<String> words = tokenize(input.trim());
+        Command command = commands.get(words.get(0));
         if (command == null) {
-            throw new FitBotException("Unknown command: " + words[0]);
+            throw new FitBotException("Unknown command: " + words.get(0));
         }
 
-        List<String> arguments = Arrays.asList(words).subList(1, words.length);
+        List<String> arguments = words.subList(1, words.size());
         return new ParsedCommand(command, arguments);
+    }
+
+    /**
+     * Splits input into arguments while preserving whitespace inside quotes.
+     * Both single and double quotes are supported and removed from the values.
+     *
+     * @param input the trimmed command input
+     * @return the tokenized command and arguments
+     * @throws FitBotException if a quote is not closed
+     */
+    private static List<String> tokenize(String input) throws FitBotException {
+        List<String> tokens = new ArrayList<>();
+        StringBuilder current = new StringBuilder();
+        char quote = 0;
+        boolean tokenStarted = false;
+
+        for (int index = 0; index < input.length(); index++) {
+            char character = input.charAt(index);
+
+            if (quote != 0) {
+                if (character == quote) {
+                    quote = 0;
+                } else {
+                    current.append(character);
+                }
+            } else if (character == '\'' || character == '"') {
+                quote = character;
+                tokenStarted = true;
+            } else if (Character.isWhitespace(character)) {
+                if (tokenStarted) {
+                    tokens.add(current.toString());
+                    current.setLength(0);
+                    tokenStarted = false;
+                }
+            } else {
+                current.append(character);
+                tokenStarted = true;
+            }
+        }
+
+        if (quote != 0) {
+            throw new FitBotException("Unterminated quote.");
+        }
+
+        if (tokenStarted) {
+            tokens.add(current.toString());
+        }
+
+        return tokens;
     }
 }

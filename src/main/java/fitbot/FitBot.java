@@ -49,7 +49,7 @@ public class FitBot {
     }
 
     /**
-     * Starts the command-line interaction loop and executes recognised commands
+     * Starts the command-line interaction loop and executes recognized commands
      * until the input ends or a command requests that the application exit.
      */
     public void start() {
