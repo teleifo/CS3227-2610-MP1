@@ -140,7 +140,7 @@ public class WorkoutStorage {
 
     private static String toJson(Workout workout) {
         Map<String, Object> fields = new java.util.LinkedHashMap<>();
-        fields.put("type", workout.getType());
+        fields.put("type", workout.getType().name());
         fields.put("date", workout.getDate());
         fields.put("durationSeconds", workout.getDurationSeconds());
         fields.putAll(workout.getStorageFields());

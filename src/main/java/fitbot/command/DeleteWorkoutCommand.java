@@ -11,14 +11,15 @@ import fitbot.model.Workout;
 public class DeleteWorkoutCommand extends Command {
     /** Creates the delete command. */
     public DeleteWorkoutCommand() {
-        super("delete", "Delete a workout by its list number.");
+        super("delete", "Delete a workout by its list number.",
+                "delete <workout number>", "delete 2");
     }
 
     @Override
     public CommandResult execute(List<String> arguments, List<Workout> workouts)
             throws FitBotException {
         if (arguments.size() != 1) {
-            throw new FitBotException("Usage: delete <workout number>");
+            throw new FitBotException("Usage: " + getUsage() + "\nExample: " + getExample() + ".");
         }
 
         int position;

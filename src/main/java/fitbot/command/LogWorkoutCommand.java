@@ -20,12 +20,19 @@ import fitbot.parser.ArgumentParser;
 public class LogWorkoutCommand extends Command {
     /** Creates the log command. */
     public LogWorkoutCommand() {
-        super("log", "Log a workout.");
+        super("log", "Log a workout.",
+                "log -type <run|cycle> -date <YYYY-MM-DD> -duration <seconds>\n"
+                        + "-distance <kilometres> [-elevation <metres>] [-max <km/hr>]",
+                "log -type run -date 2026-09-01 -duration 1800 -distance 5");
     }
 
     @Override
     public CommandResult execute(List<String> arguments, List<Workout> workouts)
             throws FitBotException {
+        if (arguments.size() < 2) {
+            throw new FitBotException("Usage: \n" + getUsage() + "\n" + getExample());
+        }
+
         Map<String, String> options = ArgumentParser.parseOptions(arguments);
 
         Set<String> allSupportedOptions = new HashSet<>(RunWorkout.getSupportedOptions());

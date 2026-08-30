@@ -9,7 +9,7 @@ import fitbot.model.Workout;
  * Defines the common interface for commands supported by FitBot.
  *
  * <p>Each concrete command provides a keyword and description, then
- * implements the behavior performed when the command is selected.</p>
+ * implements the behaviour performed when the command is selected.</p>
  */
 public abstract class Command {
     /** The keyword used to select this command. */
@@ -17,6 +17,8 @@ public abstract class Command {
 
     /** A short explanation of what this command does. */
     private final String description;
+    private final String usage;
+    private final String example;
 
     /**
      * Creates a command with the given identifying information.
@@ -24,9 +26,11 @@ public abstract class Command {
      * @param keyword the keyword used to select the command
      * @param description a short description of the command
      */
-    protected Command(String keyword, String description) {
+    protected Command(String keyword, String description, String usage, String example) {
         this.keyword = keyword;
         this.description = description;
+        this.usage = usage;
+        this.example = example;
     }
 
     /**
@@ -45,6 +49,20 @@ public abstract class Command {
      */
     public String getDescription() {
         return description;
+    }
+
+    /**
+     * Returns the syntax shown when a user requests help for this command.
+     *
+     * @return the command usage
+     */
+    public String getUsage() {
+        return usage;
+    }
+
+    /** Returns an example invocation for this command. */
+    public String getExample() {
+        return example;
     }
 
     /**

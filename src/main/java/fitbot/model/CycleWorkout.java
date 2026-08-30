@@ -12,9 +12,9 @@ public class CycleWorkout extends Workout {
     /** Options accepted when logging a cycle. */
     private static final Set<String> SUPPORTED_OPTIONS = Set.of(
             "-type", "-date", "-duration", "-distance", "-elevation", "-max");
-    private final double distanceKilometres;
-    private final Double elevationGainMetres;
-    private final Double maxSpeedKilometresPerHour;
+    private double distanceKilometres;
+    private Double elevationGainMetres;
+    private Double maxSpeedKilometresPerHour;
 
     /** Creates a cycling workout. */
     public CycleWorkout(LocalDate date, long durationSeconds, double distanceKilometres,
@@ -37,6 +37,30 @@ public class CycleWorkout extends Workout {
         return maxSpeedKilometresPerHour;
     }
 
+    /** Changes the cycling distance. */
+    public void setDistanceKilometres(double distanceKilometres) {
+        if (distanceKilometres <= 0) {
+            throw new IllegalArgumentException("Distance must be positive.");
+        }
+        this.distanceKilometres = distanceKilometres;
+    }
+
+    /** Changes the cycling elevation gain. */
+    public void setElevationGainMetres(Double elevationGainMetres) {
+        if (elevationGainMetres != null && elevationGainMetres < 0) {
+            throw new IllegalArgumentException("Elevation cannot be negative.");
+        }
+        this.elevationGainMetres = elevationGainMetres;
+    }
+
+    /** Changes the maximum cycling speed. */
+    public void setMaxSpeedKilometresPerHour(Double maxSpeedKilometresPerHour) {
+        if (maxSpeedKilometresPerHour != null && maxSpeedKilometresPerHour <= 0) {
+            throw new IllegalArgumentException("Maximum speed must be positive.");
+        }
+        this.maxSpeedKilometresPerHour = maxSpeedKilometresPerHour;
+    }
+
     public static Set<String> getSupportedOptions() {
         return SUPPORTED_OPTIONS;
     }
@@ -51,8 +75,8 @@ public class CycleWorkout extends Workout {
     }
 
     @Override
-    public String getType() {
-        return "CYCLE";
+    public WorkoutType getType() {
+        return WorkoutType.CYCLE;
     }
 
     @Override

@@ -8,16 +8,9 @@ import fitbot.model.Workout;
  * Command that ends the FitBot application.
  */
 public class ByeCommand extends Command {
-    /** Keyword used to select the goodbye command. */
-    private static final String KEYWORD = "bye";
-
-    /** Message displayed before FitBot terminates. */
-    private static final String GOODBYE_MESSAGE =
-            "See you soon! Until then, stay fit!";
-
     /** Creates the goodbye command. */
     public ByeCommand() {
-        super(KEYWORD, "Exit FitBot.");
+        super("bye", "Exit FitBot.", "bye", "bye");
     }
 
     /**
@@ -28,8 +21,7 @@ public class ByeCommand extends Command {
      * @return a result that requests application termination
      */
     @Override
-    public CommandResult execute(List<String> arguments,
-            List<Workout> workouts) {
-        return new CommandResult(GOODBYE_MESSAGE, true);
+    public CommandResult execute(List<String> arguments, List<Workout> workouts) {
+        return new CommandResult("See you soon! Until then, stay fit!", true);
     }
 }

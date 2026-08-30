@@ -12,8 +12,8 @@ public class RunWorkout extends Workout {
     /** Options accepted when logging a run. */
     private static final Set<String> SUPPORTED_OPTIONS = Set.of(
             "-type", "-date", "-duration", "-distance", "-elevation");
-    private final double distanceKilometres;
-    private final Double elevationGainMetres;
+    private double distanceKilometres;
+    private Double elevationGainMetres;
 
     /** Creates a running workout. */
     public RunWorkout(LocalDate date, long durationSeconds, double distanceKilometres,
@@ -31,6 +31,22 @@ public class RunWorkout extends Workout {
         return elevationGainMetres;
     }
 
+    /** Changes the running distance. */
+    public void setDistanceKilometres(double distanceKilometres) {
+        if (distanceKilometres <= 0) {
+            throw new IllegalArgumentException("Distance must be positive.");
+        }
+        this.distanceKilometres = distanceKilometres;
+    }
+
+    /** Changes the running elevation gain. */
+    public void setElevationGainMetres(Double elevationGainMetres) {
+        if (elevationGainMetres != null && elevationGainMetres < 0) {
+            throw new IllegalArgumentException("Elevation cannot be negative.");
+        }
+        this.elevationGainMetres = elevationGainMetres;
+    }
+
     public static Set<String> getSupportedOptions() {
         return SUPPORTED_OPTIONS;
     }
@@ -45,8 +61,8 @@ public class RunWorkout extends Workout {
     }
 
     @Override
-    public String getType() {
-        return "RUN";
+    public WorkoutType getType() {
+        return WorkoutType.RUN;
     }
 
     @Override

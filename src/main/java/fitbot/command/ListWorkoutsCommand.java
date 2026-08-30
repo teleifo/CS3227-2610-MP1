@@ -3,6 +3,7 @@ package fitbot.command;
 import java.util.List;
 import java.util.Locale;
 
+import fitbot.exception.FitBotException;
 import fitbot.formatter.DurationFormatter;
 import fitbot.model.CycleWorkout;
 import fitbot.model.RunWorkout;
@@ -14,11 +15,16 @@ import fitbot.model.Workout;
 public class ListWorkoutsCommand extends Command {
     /** Creates the list command. */
     public ListWorkoutsCommand() {
-        super("list", "List logged workouts.");
+        super("list", "List logged workouts.", "list", "list");
     }
 
     @Override
-    public CommandResult execute(List<String> arguments, List<Workout> workouts) {
+    public CommandResult execute(List<String> arguments, List<Workout> workouts)
+            throws FitBotException {
+        if (!arguments.isEmpty()) {
+            throw new FitBotException("Usage: " + getUsage());
+        }
+
         if (workouts.isEmpty()) {
             return new CommandResult("No workouts have been logged yet.", false);
         }
