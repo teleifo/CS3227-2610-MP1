@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 
 import fitbot.exception.FitBotException;
 import fitbot.model.CycleWorkout;
+import fitbot.model.GymWorkout;
 import fitbot.model.RunWorkout;
 import fitbot.model.Workout;
 
@@ -33,6 +34,7 @@ public class WorkoutStorage {
         this.file = file;
         register("RUN", WorkoutStorage::createRunWorkout);
         register("CYCLE", WorkoutStorage::createCycleWorkout);
+        register("GYM", WorkoutStorage::createGymWorkout);
     }
 
     /** Registers how a workout type is reconstructed from JSON fields. */
@@ -127,6 +129,17 @@ public class WorkoutStorage {
         Double maxSpeed = maxSpeedText == null ? null : Double.valueOf(maxSpeedText);
 
         return new CycleWorkout(date, duration, distance, elevation, maxSpeed);
+    }
+
+    private static Workout createGymWorkout(Map<String, String> values) {
+        LocalDate date = LocalDate.parse(required(values, "date"));
+        long duration = Long.parseLong(required(values, "durationSeconds"));
+        try {
+            return new GymWorkout(date, duration,
+                    fitbot.command.LogWorkoutCommand.parseBlocks(required(values, "blocks")));
+        } catch (FitBotException exception) {
+            throw new IllegalArgumentException(exception.getMessage(), exception);
+        }
     }
 
     private static String required(Map<String, String> values, String key) {

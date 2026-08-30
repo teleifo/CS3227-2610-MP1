@@ -8,6 +8,7 @@ import java.util.Set;
 
 import fitbot.exception.FitBotException;
 import fitbot.model.CycleWorkout;
+import fitbot.model.GymWorkout;
 import fitbot.model.RunWorkout;
 import fitbot.model.Workout;
 import fitbot.parser.ArgumentParser;
@@ -49,9 +50,15 @@ public class EditWorkoutCommand extends Command {
         case RUN:
             supportedOptions = RunWorkout.getSupportedOptions();
             break;
+
         case CYCLE:
             supportedOptions = CycleWorkout.getSupportedOptions();
             break;
+
+        case GYM:
+            supportedOptions = GymWorkout.getSupportedOptions();
+            break;
+
         default:
             throw new FitBotException("Unsupported workout type.");
         }
@@ -93,6 +100,10 @@ public class EditWorkoutCommand extends Command {
             editRun(run, options, changes);
         } else if (workout instanceof CycleWorkout cycle) {
             editCycle(cycle, options, changes);
+        } else if (workout instanceof GymWorkout) {
+            if (options.containsKey("-blocks")) {
+                throw new FitBotException("Gym blocks cannot be edited yet.");
+            }
         }
 
         if (changes.isEmpty()) {

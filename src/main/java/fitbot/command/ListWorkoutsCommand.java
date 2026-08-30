@@ -6,6 +6,7 @@ import java.util.Locale;
 import fitbot.exception.FitBotException;
 import fitbot.formatter.DurationFormatter;
 import fitbot.model.CycleWorkout;
+import fitbot.model.GymWorkout;
 import fitbot.model.RunWorkout;
 import fitbot.model.Workout;
 
@@ -40,21 +41,11 @@ public class ListWorkoutsCommand extends Command {
             if (workout instanceof RunWorkout run) {
                 output.append(" - ").append(formatDistance(run.getDistanceKilometres())).append(" km");
                 output.append(" - ").append(formatPace(run.getPaceSecondsPerKilometre())).append("/km");
-                if (run.getElevationGainMetres() != null) {
-                    output.append(" - ").append(formatElevation(run.getElevationGainMetres()))
-                            .append(" m elevation gain");
-                }
             } else if (workout instanceof CycleWorkout cycle) {
                 output.append(" - ").append(formatDistance(cycle.getDistanceKilometres())).append(" km");
                 output.append(" - ").append(formatSpeed(cycle.getSpeedKilometresPerHour())).append(" km/hr");
-                if (cycle.getElevationGainMetres() != null) {
-                    output.append(" - ").append(formatElevation(cycle.getElevationGainMetres()))
-                            .append(" m elevation gain");
-                }
-                if (cycle.getMaxSpeedKilometresPerHour() != null) {
-                    output.append(" - max ").append(formatSpeed(cycle.getMaxSpeedKilometresPerHour()))
-                            .append(" km/hr");
-                }
+            } else if (workout instanceof GymWorkout gym) {
+                output.append(" - ").append(gym.getBlocks().size()).append(" blocks");
             }
             output.append("\n");
         }
@@ -64,10 +55,6 @@ public class ListWorkoutsCommand extends Command {
 
     private static String formatDistance(double distance) {
         return String.format(Locale.ROOT, "%.2f", distance);
-    }
-
-    private static String formatElevation(double value) {
-        return String.format(Locale.ROOT, "%.1f", value);
     }
 
     private static String formatPace(double pace) {

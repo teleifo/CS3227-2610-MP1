@@ -1,6 +1,7 @@
 package fitbot.command;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -9,8 +10,11 @@ import java.util.Set;
 
 import fitbot.exception.FitBotException;
 import fitbot.model.CycleWorkout;
+import fitbot.model.GymWorkout;
 import fitbot.model.RunWorkout;
 import fitbot.model.Workout;
+import fitbot.model.WorkoutBlock;
+import fitbot.model.WorkoutSet;
 import fitbot.model.WorkoutType;
 import fitbot.parser.ArgumentParser;
 
@@ -21,22 +25,32 @@ public class LogWorkoutCommand extends Command {
     /** Creates the log command. */
     public LogWorkoutCommand() {
         super("log", "Log a workout.",
-                "log -type <run|cycle> -date <YYYY-MM-DD> -duration <seconds>\n"
-                        + "-distance <kilometres> [-elevation <metres>] [-max <km/hr>]",
-                "log -type run -date 2026-09-01 -duration 1800 -distance 5");
+                """
+                        (Run) log -type run -date <YYYY-MM-DD> -duration <seconds> -distance <kilometres> \
+                        [-elevation <metres>]
+                        (Cycle) log -type cycle -date <YYYY-MM-DD> -duration <seconds> -distance <kilometres> \
+                        [-elevation <metres>] [-max <km/hr>]
+                        (Gym) log -type gym -date <YYYY-MM-DD> -duration <seconds> -blocks \
+                        "<exercise>:<set-entry>,...;<exercise>:<set-entry>,..."
+                        - Set entries use <reps>@<kg> or <sets>x<reps>@<kg>.
+                        - Use commas for multiple sets and semicolons for multiple blocks.""",
+                """
+                        (Run) log -type run -date 2026-09-01 -duration 1800 -distance 5
+                        (Gym) log -type gym -date 2026-09-01 -duration 3600 -blocks "Curls:10@12,2x10@10\"""");
     }
 
     @Override
     public CommandResult execute(List<String> arguments, List<Workout> workouts)
             throws FitBotException {
         if (arguments.size() < 2) {
-            throw new FitBotException("Usage: \n" + getUsage() + "\n" + getExample());
+            throw new FitBotException("Usage: " + getUsage() + "\nExample: " + getExample());
         }
 
         Map<String, String> options = ArgumentParser.parseOptions(arguments);
-
         Set<String> allSupportedOptions = new HashSet<>(RunWorkout.getSupportedOptions());
         allSupportedOptions.addAll(CycleWorkout.getSupportedOptions());
+        allSupportedOptions.addAll(GymWorkout.getSupportedOptions());
+
         for (String option : options.keySet()) {
             if (!allSupportedOptions.contains(option)) {
                 throw new FitBotException("Unknown option: " + option + ".");
@@ -61,9 +75,15 @@ public class LogWorkoutCommand extends Command {
         case RUN:
             supportedOptions = RunWorkout.getSupportedOptions();
             break;
+
         case CYCLE:
             supportedOptions = CycleWorkout.getSupportedOptions();
             break;
+
+        case GYM:
+            supportedOptions = GymWorkout.getSupportedOptions();
+            break;
+
         default:
             throw new FitBotException("Unsupported workout type.");
         }
@@ -83,38 +103,90 @@ public class LogWorkoutCommand extends Command {
                 ArgumentParser.getRequiredOption(options, "-date"));
         long duration = ArgumentParser.parseLong(
                 ArgumentParser.getRequiredOption(options, "-duration"), "duration");
-        double distance = ArgumentParser.parseDouble(
-                ArgumentParser.getRequiredOption(options, "-distance"), "distance");
-        Double elevation = options.containsKey("-elevation")
-                ? ArgumentParser.parseDouble(options.get("-elevation"), "elevation") : null;
-        Double maxSpeed = options.containsKey("-max")
-                ? ArgumentParser.parseDouble(options.get("-max"), "max speed") : null;
-
-        if (duration <= 0 || distance <= 0) {
-            throw new FitBotException("Duration and distance must be positive.");
-        }
-        if (elevation != null && elevation < 0) {
-            throw new FitBotException("Elevation cannot be negative.");
-        }
-        if (maxSpeed != null && maxSpeed <= 0) {
-            throw new FitBotException("Maximum speed must be positive.");
+        if (duration <= 0) {
+            throw new FitBotException("Duration must be positive.");
         }
 
         Workout workout;
-        switch (type) {
-        case RUN:
-            workout = new RunWorkout(date, duration, distance, elevation);
-            break;
+        if (type == WorkoutType.RUN || type == WorkoutType.CYCLE) {
+            double distance = ArgumentParser.parseDouble(
+                    ArgumentParser.getRequiredOption(options, "-distance"), "distance");
+            Double elevation = options.containsKey("-elevation")
+                    ? ArgumentParser.parseDouble(options.get("-elevation"), "elevation") : null;
+            Double maxSpeed = options.containsKey("-max")
+                    ? ArgumentParser.parseDouble(options.get("-max"), "max speed") : null;
 
-        case CYCLE:
-            workout = new CycleWorkout(date, duration, distance, elevation, maxSpeed);
-            break;
+            if (distance <= 0) {
+                throw new FitBotException("Distance must be positive.");
+            }
+            if (elevation != null && elevation < 0) {
+                throw new FitBotException("Elevation cannot be negative.");
+            }
+            if (maxSpeed != null && maxSpeed <= 0) {
+                throw new FitBotException("Maximum speed must be positive.");
+            }
 
-        default:
-            throw new FitBotException("Unsupported workout type.");
+            workout = (type == WorkoutType.RUN) ? new RunWorkout(date, duration, distance, elevation)
+                    : new CycleWorkout(date, duration, distance, elevation, maxSpeed);
+        } else {
+            workout = new GymWorkout(date, duration, parseBlocks(
+                    ArgumentParser.getRequiredOption(options, "-blocks")));
         }
         workouts.add(workout);
 
         return new CommandResult("Workout logged successfully.", false, true);
+    }
+
+    /**
+     * Parses a semicolon-separated list of exercise blocks.
+     *
+     * <p>Each block has the form {@code Exercise:set-entry,set-entry,...}.
+     * A set entry such as {@code 8@70} records one set, while {@code 3x8@60}
+     * expands to three sets of eight repetitions at 60 kg. Mixed entries
+     * preserve their input order.</p>
+     *
+     * @param text compact block notation supplied by the user
+     * @return parsed exercise blocks in input order
+     * @throws FitBotException if a block or set entry is malformed
+     */
+    public static List<WorkoutBlock> parseBlocks(String text) throws FitBotException {
+        List<WorkoutBlock> blocks = new ArrayList<>();
+
+        for (String blockText : text.split(";", -1)) {
+            String[] blockParts = blockText.split(":", 2);
+            if (blockParts.length != 2 || blockParts[0].isBlank()) {
+                throw new FitBotException("Invalid block. "
+                        + "Use <exercise>:<sets>x<reps>@<kg> or <exercise>:<reps>@<kg>,<reps>@<kg>,...");
+            }
+
+            String[] sets = blockParts[1].split(",", -1);
+            List<WorkoutSet> parsedSets = new java.util.ArrayList<>();
+            try {
+                for (String set : sets) {
+                    String[] values = set.split("@", 2);
+                    if (values.length != 2) {
+                        throw new NumberFormatException();
+                    }
+
+                    String[] reps = values[0].split("x", 2);
+                    if (reps.length == 2) {
+                        int count = Integer.parseInt(reps[0]);
+                        int repetitions = Integer.parseInt(reps[1]);
+                        for (int i = 0; i < count; i++) {
+                            parsedSets.add(new WorkoutSet(repetitions, Double.parseDouble(values[1])));
+                        }
+                    } else {
+                        parsedSets.add(new WorkoutSet(Integer.parseInt(values[0]),
+                                Double.parseDouble(values[1])));
+                    }
+                }
+
+                blocks.add(new WorkoutBlock(blockParts[0].trim(), parsedSets));
+            } catch (IllegalArgumentException exception) {
+                throw new FitBotException("Invalid set in block: " + blockText + ".");
+            }
+        }
+
+        return blocks;
     }
 }
