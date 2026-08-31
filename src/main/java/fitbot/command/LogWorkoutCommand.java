@@ -26,11 +26,11 @@ public class LogWorkoutCommand extends Command {
     public LogWorkoutCommand() {
         super("log", "Log a workout.",
                 """
-                        (Run) log -type run -date <YYYY-MM-DD> -duration <seconds>
+                        (Run) log -type run -date <YYYY-MM-DD> -duration <seconds> \
                         -distance <kilometres> [-elevation <metres>]
-                        (Cycle) log -type cycle -date <YYYY-MM-DD> -duration <seconds>
+                        (Cycle) log -type cycle -date <YYYY-MM-DD> -duration <seconds> \
                         -distance <kilometres> [-elevation <metres>] [-max <km/hr>]
-                        (Gym) log -type gym -date <YYYY-MM-DD> -duration <seconds>
+                        (Gym) log -type gym -date <YYYY-MM-DD> -duration <seconds> \
                         -blocks "<exercise>:<set-entry>,...;..."
                         - Set entries use positive <reps>@<kg> or <sets>x<reps>@<kg>.
                         - Use commas for multiple sets and semicolons for multiple blocks.""",

@@ -1,0 +1,60 @@
+.root {
+    -fx-font-family: "Helvetica";
+}
+.list-view {
+    -fx-background-color: #353b48;
+}
+.list-view .viewport {
+    -fx-background-color: #353b48;
+}
+.list-view .list-cell {
+    -fx-background-color: transparent;
+}
+.titled-pane > .title {
+    -fx-background-color: #dcdde1;
+    -fx-padding: 10px 14px;
+}
+.titled-pane > .title > .text {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-fill: #353b48;
+}
+.command-panel-content {
+    -fx-padding: 12px 14px 14px 14px;
+}
+.command-label {
+    -fx-text-fill: #353b48;
+    -fx-font-weight: bold;
+}
+.command-input-row .text-field {
+    -fx-background-color: #f1f2f6;
+    -fx-text-fill: #353b48;
+    -fx-border-color: #353b48;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-padding: 8px 10px;
+}
+.command-input-row .text-field:focused {
+    -fx-border-color: #1e90ff;
+    -fx-background-color: #ffffff;
+}
+.command-input-row .button {
+    -fx-background-color: #0097e6;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6px;
+    -fx-padding: 8px 16px;
+}
+.command-input-row .button:hover {
+    -fx-background-color: #187bcd;
+}
+.command-output {
+    -fx-control-inner-background: #f1f2f6;
+    -fx-text-fill: #353b48;
+    -fx-border-color: #353b48;
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
+}

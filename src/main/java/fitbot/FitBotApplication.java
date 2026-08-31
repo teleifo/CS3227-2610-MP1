@@ -1,10 +1,13 @@
 package fitbot;
 
+import java.io.IOException;
+
 import fitbot.exception.FitBotException;
-import fitbot.gui.CommandPanel;
-import fitbot.gui.WorkoutListView;
+import fitbot.gui.MainController;
 import fitbot.service.WorkoutService;
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
@@ -13,8 +16,8 @@ import javafx.stage.Stage;
 /**
  * Minimal JavaFX application shell for FitBot.
  *
- * <p>Later increments will replace the placeholder content with the workout
- * list and workout forms.</p>
+ * <p>The layout is loaded from FXML while application logic remains in Java
+ * controllers and the shared service.</p>
  */
 public class FitBotApplication extends Application {
     /** Default window width in pixels. */
@@ -33,17 +36,27 @@ public class FitBotApplication extends Application {
             return;
         }
 
-        BorderPane root = new BorderPane();
-        WorkoutListView workoutList = new WorkoutListView(service);
-        root.setCenter(workoutList);
-        root.setBottom(new CommandPanel(service, workoutList::refresh));
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fitbot/gui/main-view.fxml"));
+            Parent root = loader.load();
+            MainController controller = loader.getController();
+            controller.setService(service);
 
-        Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
-        stage.setTitle("FitBot");
-        stage.setMinWidth(500);
-        stage.setMinHeight(400);
-        stage.setScene(scene);
-        stage.show();
+            Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+            scene.getStylesheets().add(
+                    getClass().getResource("/fitbot/gui/styles.css").toExternalForm());
+            scene.getStylesheets().add(
+                    getClass().getResource("/fitbot/gui/styles.css").toExternalForm()
+            );
+            stage.setTitle("FitBot");
+            stage.setMinWidth(500);
+            stage.setMinHeight(400);
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException exception) {
+            showStartupError(stage, new FitBotException("Could not load GUI: "
+                    + exception.getMessage()));
+        }
     }
 
     /** Shows a startup error when saved workout data cannot be loaded. */

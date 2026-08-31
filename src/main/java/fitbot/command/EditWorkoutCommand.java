@@ -23,11 +23,11 @@ public class EditWorkoutCommand extends Command {
     public EditWorkoutCommand() {
         super("edit", "Edit a workout by its list number.",
                 """
-                        (Run) edit <workout number> [-date <YYYY-MM-DD>] [-duration <seconds>]
+                        (Run) edit <workout number> [-date <YYYY-MM-DD>] [-duration <seconds>] \
                         [-distance <kilometres>] [-elevation <metres>]
-                        (Cycle) edit <workout number> [-date <YYYY-MM-DD>] [-duration <seconds>]
+                        (Cycle) edit <workout number> [-date <YYYY-MM-DD>] [-duration <seconds>] \
                         [-distance <kilometres>] [-elevation <metres>] [-max <km/hr>]
-                        (Gym) edit <workout number> [-date <YYYY-MM-DD>] [-duration <seconds>]
+                        (Gym) edit <workout number> [-date <YYYY-MM-DD>] [-duration <seconds>] \
                         [-blocks "<exercise>:<set-entry>,..."] OR
                         [-block <number> [-name <exercise>] [-sets <set-entry>,...]] OR
                         [-block <number> [-set <number> [-reps <number>] [-weight <kg>]]]""",
