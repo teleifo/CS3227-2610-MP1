@@ -5,6 +5,7 @@ import java.time.format.DateTimeParseException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import fitbot.exception.FitBotException;
 
@@ -12,6 +13,17 @@ import fitbot.exception.FitBotException;
  * Parses and validates option values used by commands.
  */
 public final class ArgumentParser {
+    /** Checks option names before parsing values or detecting duplicate options. */
+    public static void validateOptionNames(List<String> arguments, Set<String> supportedOptions)
+            throws FitBotException {
+        for (String argument : arguments) {
+            if (argument.startsWith("-") && isOptionToken(argument)
+                    && !supportedOptions.contains(argument)) {
+                throw new FitBotException("Unknown option: " + argument + ".");
+            }
+        }
+    }
+
     /** Converts alternating option names and values into a map. */
     public static Map<String, String> parseOptions(List<String> arguments) throws FitBotException {
         Map<String, String> options = new LinkedHashMap<>();

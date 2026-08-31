@@ -39,7 +39,7 @@ public class EditWorkoutCommand extends Command {
     @Override
     public CommandResult execute(List<String> arguments, List<Workout> workouts)
             throws FitBotException {
-        if (arguments.size() < 2) {
+        if (arguments.isEmpty()) {
             throw new FitBotException("Usage: " + getUsage() + "\n\nExample: " + getExample());
         }
 
@@ -53,7 +53,6 @@ public class EditWorkoutCommand extends Command {
             throw new FitBotException("Invalid workout number.");
         }
 
-        Map<String, String> options = ArgumentParser.parseOptions(arguments.subList(1, arguments.size()));
         Workout workout = workouts.get(position - 1);
 
         Set<String> supportedOptions;
@@ -74,16 +73,15 @@ public class EditWorkoutCommand extends Command {
             throw new FitBotException("Unsupported workout type.");
         }
 
-        for (String option : options.keySet()) {
-            if (!supportedOptions.contains(option)) {
-                throw new FitBotException("Unknown option: " + option + ".");
-            }
-        }
+        List<String> optionArguments = arguments.subList(1, arguments.size());
+        ArgumentParser.validateOptionNames(optionArguments, supportedOptions);
+        Map<String, String> options = ArgumentParser.parseOptions(optionArguments);
         for (Map.Entry<String, String> option : options.entrySet()) {
             if (option.getValue() == null) {
                 throw new FitBotException("Missing value for " + option.getKey() + ".");
             }
         }
+
         if (options.containsKey("-type")) {
             throw new FitBotException("Workout type cannot be edited.");
         }

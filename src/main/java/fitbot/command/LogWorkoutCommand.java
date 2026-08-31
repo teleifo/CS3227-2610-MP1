@@ -42,20 +42,17 @@ public class LogWorkoutCommand extends Command {
     @Override
     public CommandResult execute(List<String> arguments, List<Workout> workouts)
             throws FitBotException {
-        if (arguments.size() < 2) {
+        if (arguments.isEmpty()) {
             throw new FitBotException("Usage: " + getUsage() + "\n\nExample: " + getExample());
         }
 
-        Map<String, String> options = ArgumentParser.parseOptions(arguments);
+        Map<String, String> options;
         Set<String> allSupportedOptions = new HashSet<>(RunWorkout.getSupportedOptions());
         allSupportedOptions.addAll(CycleWorkout.getSupportedOptions());
         allSupportedOptions.addAll(GymWorkout.getSupportedLogOptions());
 
-        for (String option : options.keySet()) {
-            if (!allSupportedOptions.contains(option)) {
-                throw new FitBotException("Unknown option: " + option + ".");
-            }
-        }
+        ArgumentParser.validateOptionNames(arguments, allSupportedOptions);
+        options = ArgumentParser.parseOptions(arguments);
         for (Map.Entry<String, String> option : options.entrySet()) {
             if (option.getValue() == null) {
                 throw new FitBotException("Missing value for " + option.getKey() + ".");
@@ -93,12 +90,6 @@ public class LogWorkoutCommand extends Command {
                 throw new FitBotException("Unknown option: " + option + ".");
             }
         }
-        for (Map.Entry<String, String> option : options.entrySet()) {
-            if (option.getValue() == null) {
-                throw new FitBotException("Missing value for " + option.getKey() + ".");
-            }
-        }
-
         LocalDate date = ArgumentParser.parseDate(
                 ArgumentParser.getRequiredOption(options, "-date"));
         long duration = ArgumentParser.parseLong(

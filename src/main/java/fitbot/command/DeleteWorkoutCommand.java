@@ -18,8 +18,11 @@ public class DeleteWorkoutCommand extends Command {
     @Override
     public CommandResult execute(List<String> arguments, List<Workout> workouts)
             throws FitBotException {
-        if (arguments.size() != 1) {
+        if (arguments.isEmpty()) {
             throw new FitBotException("Usage: " + getUsage() + "\n\nExample: " + getExample());
+        }
+        if (arguments.size() != 1) {
+            throw new FitBotException("Delete requires exactly one workout number.");
         }
 
         int position;

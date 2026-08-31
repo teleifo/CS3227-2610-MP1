@@ -11,6 +11,8 @@ import fitbot.command.ByeCommand;
 import fitbot.command.Command;
 import fitbot.command.DeleteWorkoutCommand;
 import fitbot.command.EditWorkoutCommand;
+import fitbot.command.FilterWorkoutsCommand;
+import fitbot.command.FindWorkoutCommand;
 import fitbot.command.HelpCommand;
 import fitbot.command.ListWorkoutsCommand;
 import fitbot.command.LogWorkoutCommand;
@@ -28,6 +30,8 @@ public class Parser {
         registerCommand(new HelpCommand());
         registerCommand(new LogWorkoutCommand());
         registerCommand(new ListWorkoutsCommand());
+        registerCommand(new FindWorkoutCommand());
+        registerCommand(new FilterWorkoutsCommand());
         registerCommand(new EditWorkoutCommand());
         registerCommand(new DeleteWorkoutCommand());
         registerCommand(new ByeCommand());
