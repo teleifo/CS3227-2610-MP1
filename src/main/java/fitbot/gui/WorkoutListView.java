@@ -29,7 +29,9 @@ public class WorkoutListView extends ListView<Workout> {
     /** Creates a workout list backed by the supplied service. */
     public WorkoutListView(WorkoutService service) {
         this.service = service;
-        setPlaceholder(new Label("No workouts have been logged yet."));
+        Label emptyMessage = new Label("No workouts have been logged yet.");
+        emptyMessage.setStyle("-fx-text-fill: #ffffff;");
+        setPlaceholder(emptyMessage);
         setCellFactory(list -> new WorkoutCardCell());
         refresh();
     }
