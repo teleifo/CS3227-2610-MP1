@@ -62,11 +62,17 @@ public class FindWorkoutCommand extends Command {
                     .append("\nElevation gain: ").append(value(cycle.getElevationGainMetres())).append(" metres")
                     .append("\nMaximum speed: ").append(value(cycle.getMaxSpeedKilometresPerHour())).append(" km/hr");
         } else if (workout instanceof GymWorkout gym) {
-            result.append("\nBlocks: ").append(gym.getBlocks().size());
+            result.append("\nBlocks: ").append(gym.getBlocks().size())
+                    .append("\nTotal volume: ").append(String.format("%.1f kg",
+                            gym.getTotalVolumeKilograms()));
             for (int blockIndex = 0; blockIndex < gym.getBlocks().size(); blockIndex++) {
                 WorkoutBlock block = gym.getBlocks().get(blockIndex);
                 result.append("\nBlock ").append(blockIndex + 1).append(": ")
-                        .append(block.getExerciseName());
+                        .append(block.getExerciseName())
+                        .append("\n  Volume: ").append(String.format("%.1f kg",
+                                block.getTotalVolumeKilograms()))
+                        .append("\n  1 Rep Max: ").append(String.format("%.1f kg",
+                                block.getOneRepMaxKilograms()));
                 for (WorkoutSet set : block.getSets()) {
                     result.append("\n  Set: ").append(set.getRepetitions())
                             .append(" reps @ ").append(set.getWeightKilograms()).append(" kg");

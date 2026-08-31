@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -27,6 +28,32 @@ public class WorkoutBlock {
 
     public List<WorkoutSet> getSets() {
         return Collections.unmodifiableList(sets);
+    }
+
+    /**
+     * Calculates the total weight lifted across every set in this block.
+     *
+     * @return the sum of repetitions multiplied by weight, in kilograms
+     */
+    @JsonIgnore
+    public double getTotalVolumeKilograms() {
+        return sets.stream()
+                .mapToDouble(set -> set.getRepetitions() * set.getWeightKilograms())
+                .sum();
+    }
+
+    /**
+     * Calculates the best estimated one-repetition maximum across this block's sets.
+     *
+     * @return the largest estimated 1RM, in kilograms
+     */
+    @JsonIgnore
+    public double getOneRepMaxKilograms() {
+        return sets.stream()
+                .mapToDouble(set -> set.getWeightKilograms()
+                        * (1 + 0.0333 * set.getRepetitions()))
+                .max()
+                .orElse(0);
     }
 
     public void setExerciseName(String exerciseName) {

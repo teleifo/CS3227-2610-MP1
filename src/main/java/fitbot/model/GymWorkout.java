@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
@@ -39,6 +40,19 @@ public class GymWorkout extends Workout {
 
     public List<WorkoutBlock> getBlocks() {
         return Collections.unmodifiableList(blocks);
+    }
+
+    /**
+     * Calculates the total weight lifted across every set in this workout.
+     *
+     * @return the sum of repetitions multiplied by weight for every set, in kilograms
+     */
+    @JsonIgnore
+    public double getTotalVolumeKilograms() {
+        return blocks.stream()
+                .flatMap(block -> block.getSets().stream())
+                .mapToDouble(set -> set.getRepetitions() * set.getWeightKilograms())
+                .sum();
     }
 
     /** Replaces every exercise block while preserving the workout metadata. */

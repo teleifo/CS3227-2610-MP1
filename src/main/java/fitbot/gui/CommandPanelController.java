@@ -28,6 +28,17 @@ public class CommandPanelController {
         this.refreshAction = refreshAction;
     }
 
+    /** Runs the help command and displays its output. */
+    @FXML
+    private void showHelp() {
+        commandOutput.clear();
+        try {
+            commandOutput.setText(service.execute(Parser.parseCommand("help")).getMessage());
+        } catch (FitBotException exception) {
+            commandOutput.setText(exception.getMessage());
+        }
+    }
+
     /** Executes the command entered by the user. */
     @FXML
     private void submitCommand(ActionEvent event) {

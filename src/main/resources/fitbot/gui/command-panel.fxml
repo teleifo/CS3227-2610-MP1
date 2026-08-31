@@ -8,8 +8,9 @@
         <VBox spacing="10" styleClass="command-panel-content">
             <HBox spacing="8" alignment="CENTER_LEFT" styleClass="command-input-row">
                 <Label text="Command:" styleClass="command-label" />
-                <TextField fx:id="commandInput" promptText="Enter a command, for example: list"
+                <TextField fx:id="commandInput" promptText="Enter a command, for example: help"
                            HBox.hgrow="ALWAYS" onAction="#submitCommand" />
+                <Button text="?" onAction="#showHelp" />
                 <Button text="Run" defaultButton="true" onAction="#submitCommand" />
             </HBox>
             <TextArea fx:id="commandOutput" editable="false" wrapText="true"

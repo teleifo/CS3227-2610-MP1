@@ -10,6 +10,13 @@
 .list-view .list-cell {
     -fx-background-color: transparent;
 }
+.filter-combo .list-cell {
+    -fx-background-color: #353b48;
+    -fx-text-fill: #ffffff;
+}
+.filter-combo .arrow {
+    -fx-background-color: #ffffff;
+}
 .titled-pane > .title {
     -fx-background-color: #dcdde1;
     -fx-padding: 10px 14px;

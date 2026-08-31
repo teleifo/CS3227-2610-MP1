@@ -1,12 +1,15 @@
 package fitbot.gui;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 
 import fitbot.formatter.DurationFormatter;
 import fitbot.model.CycleWorkout;
 import fitbot.model.GymWorkout;
 import fitbot.model.RunWorkout;
 import fitbot.model.Workout;
+import fitbot.model.WorkoutType;
 import fitbot.service.WorkoutService;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -18,6 +21,8 @@ import javafx.scene.layout.VBox;
 
 /** Displays workouts as readable summary cards. */
 public class WorkoutListView extends ListView<Workout> {
+    private static final DateTimeFormatter DATE_FORMAT =
+            DateTimeFormatter.ofPattern("d MMMM uuuu", Locale.ENGLISH);
     /** Shared service providing the current workouts. */
     private final WorkoutService service;
 
@@ -32,6 +37,22 @@ public class WorkoutListView extends ListView<Workout> {
     /** Reloads the displayed workouts from the service. */
     public final void refresh() {
         setItems(FXCollections.observableArrayList(service.getWorkouts()));
+    }
+
+    /** Displays only workouts of the selected type, or all workouts when null. */
+    public void filterByType(WorkoutType type) {
+        if (type == null) {
+            refresh();
+            return;
+        }
+        setItems(FXCollections.observableArrayList(service.getWorkouts().stream()
+                .filter(workout -> workout.getType() == type)
+                .toList()));
+    }
+
+    /** Returns the workout's position in the complete, unfiltered list. */
+    public int getOriginalPosition(Workout workout) {
+        return service.getWorkouts().indexOf(workout) + 1;
     }
 
     /** Renders one workout as a card in the list. */
@@ -51,7 +72,7 @@ public class WorkoutListView extends ListView<Workout> {
             card.setStyle("-fx-background-color: transparent; -fx-border-color: transparent;"
                     + " -fx-border-radius: 8; -fx-background-radius: 8;");
 
-            Label date = new Label(workout.getDate().toString());
+            Label date = new Label(workout.getDate().format(DATE_FORMAT));
             date.setStyle("-fx-font-size: 11px; -fx-text-fill: #dfe4ea;");
 
             Label type = new Label(workout.getType().toString());
@@ -83,6 +104,7 @@ public class WorkoutListView extends ListView<Workout> {
             if (workout instanceof GymWorkout gym) {
                 return List.of(
                         metric("Blocks", String.valueOf(gym.getBlocks().size())),
+                        metric("Total Volume", String.format("%.1f kg", gym.getTotalVolumeKilograms())),
                         metric("Time", DurationFormatter.formatDuration(gym.getDurationSeconds())));
             }
             return List.of();
@@ -92,10 +114,12 @@ public class WorkoutListView extends ListView<Workout> {
         private VBox metric(String name, String value) {
             Label nameLabel = new Label(name);
             nameLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #dfe4ea;");
+
             Label valueLabel = new Label(value);
             valueLabel.setWrapText(false);
             valueLabel.setStyle("-fx-font-size: 15px; -fx-font-weight: bold;"
                     + " -fx-text-fill: #ffffff;");
+
             return new VBox(2, nameLabel, valueLabel);
         }
     }
