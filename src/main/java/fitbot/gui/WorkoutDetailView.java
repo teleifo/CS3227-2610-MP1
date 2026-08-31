@@ -2,6 +2,8 @@ package fitbot.gui;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.function.BiConsumer;
+import java.util.function.IntConsumer;
 
 import fitbot.formatter.DurationFormatter;
 import fitbot.model.CycleWorkout;
@@ -11,6 +13,7 @@ import fitbot.model.Workout;
 import fitbot.model.WorkoutBlock;
 import fitbot.model.WorkoutSet;
 import javafx.geometry.Insets;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
@@ -23,6 +26,8 @@ public class WorkoutDetailView extends ScrollPane {
             DateTimeFormatter.ofPattern("d MMMM uuuu", Locale.ENGLISH);
     private static final String TEXT = "-fx-text-fill: #ffffff;";
     private static final String MUTED = "-fx-text-fill: #dfe4ea;";
+    private IntConsumer deleteAction = position -> { };
+    private BiConsumer<Integer, Workout> editAction = (position, workout) -> { };
 
     /** Creates a detail view with an empty-state message. */
     public WorkoutDetailView() {
@@ -64,7 +69,26 @@ public class WorkoutDetailView extends ScrollPane {
                 card.getChildren().add(exercise);
             }
         }
+        Button editButton = new Button("Edit");
+        editButton.setStyle("-fx-background-color: #487eb0; -fx-text-fill: #ffffff;"
+                + " -fx-font-weight: bold;");
+        editButton.setOnAction(event -> editAction.accept(position, workout));
+        Button deleteButton = new Button("Delete");
+        deleteButton.setStyle("-fx-background-color: #e84118; -fx-text-fill: #ffffff;"
+                + " -fx-font-weight: bold;");
+        deleteButton.setOnAction(event -> deleteAction.accept(position));
+        card.getChildren().add(new HBox(8, editButton, deleteButton));
         setContent(card);
+    }
+
+    /** Supplies the action invoked by the Delete button. */
+    public void setDeleteAction(IntConsumer deleteAction) {
+        this.deleteAction = deleteAction;
+    }
+
+    /** Supplies the action invoked by the Edit button. */
+    public void setEditAction(BiConsumer<Integer, Workout> editAction) {
+        this.editAction = editAction;
     }
 
     private VBox metrics(Workout workout) {

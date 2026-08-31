@@ -142,17 +142,21 @@ public class EditWorkoutCommand extends Command {
                 }
             }
             if (options.containsKey("-elevation")) {
-                double elevation = ArgumentParser.parseDouble(options.get("-elevation"), "elevation");
-                if (elevation < 0) {
-                    throw new FitBotException("Invalid elevation: cannot be negative.");
+                if (!"null".equalsIgnoreCase(options.get("-elevation"))) {
+                    double elevation = ArgumentParser.parseDouble(options.get("-elevation"), "elevation");
+                    if (elevation < 0) {
+                        throw new FitBotException("Invalid elevation: cannot be negative.");
+                    }
                 }
             }
         }
 
         if (workout instanceof CycleWorkout && options.containsKey("-max")) {
-            double max = ArgumentParser.parseDouble(options.get("-max"), "max speed");
-            if (max <= 0) {
-                throw new FitBotException("Invalid max speed: must be positive.");
+            if (!"null".equalsIgnoreCase(options.get("-max"))) {
+                double max = ArgumentParser.parseDouble(options.get("-max"), "max speed");
+                if (max <= 0) {
+                    throw new FitBotException("Invalid max speed: must be positive.");
+                }
             }
         }
 
@@ -229,7 +233,7 @@ public class EditWorkoutCommand extends Command {
         }
         if (options.containsKey("-elevation")) {
             Double old = run.getElevationGainMetres();
-            Double value = ArgumentParser.parseDouble(options.get("-elevation"), "elevation");
+            Double value = parseOptionalDouble(options.get("-elevation"), "elevation");
             run.setElevationGainMetres(value);
             if (!Objects.equals(old, value)) {
                 changes.add("elevation: " + old + " -> " + value);
@@ -250,7 +254,7 @@ public class EditWorkoutCommand extends Command {
         }
         if (options.containsKey("-elevation")) {
             Double old = cycle.getElevationGainMetres();
-            Double value = ArgumentParser.parseDouble(options.get("-elevation"), "elevation");
+            Double value = parseOptionalDouble(options.get("-elevation"), "elevation");
             cycle.setElevationGainMetres(value);
             if (!java.util.Objects.equals(old, value)) {
                 changes.add("elevation: " + old + " -> " + value);
@@ -258,12 +262,17 @@ public class EditWorkoutCommand extends Command {
         }
         if (options.containsKey("-max")) {
             Double old = cycle.getMaxSpeedKilometresPerHour();
-            Double value = ArgumentParser.parseDouble(options.get("-max"), "max speed");
+            Double value = parseOptionalDouble(options.get("-max"), "max speed");
             cycle.setMaxSpeedKilometresPerHour(value);
             if (!java.util.Objects.equals(old, value)) {
                 changes.add("max speed: " + old + " -> " + value);
             }
         }
+    }
+
+    /** Parses an optional numeric edit, where the literal null clears the value. */
+    private static Double parseOptionalDouble(String value, String name) throws FitBotException {
+        return "null".equalsIgnoreCase(value) ? null : ArgumentParser.parseDouble(value, name);
     }
 
     /** Applies full-block replacement or targeted set-weight edits to a gym workout. */
