@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.VBox?>
+<DialogPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="fitbot.gui.DeleteWorkoutController"
+            styleClass="custom-dialog-pane">
+    <buttonTypes>
+        <ButtonType fx:constant="YES" />
+        <ButtonType fx:constant="NO" />
+    </buttonTypes>
+    <content><VBox spacing="10" styleClass="dialog-content">
+        <Label fx:id="titleLabel" styleClass="dialog-title" />
+        <Label text="This action cannot be undone." styleClass="dialog-message" />
+    </VBox></content>
+</DialogPane>

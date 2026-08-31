@@ -20,7 +20,7 @@ public abstract class Workout {
 
     /** Creates a workout with its common details. */
     protected Workout(LocalDate date, long durationSeconds) {
-        this.date = date;
+        setDate(date);
         this.durationSeconds = durationSeconds;
     }
 
@@ -34,6 +34,12 @@ public abstract class Workout {
 
     /** Changes the workout date. */
     public void setDate(LocalDate date) {
+        if (date == null) {
+            throw new IllegalArgumentException("Date cannot be null.");
+        }
+        if (date.isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("Date cannot be in the future.");
+        }
         this.date = date;
     }
 

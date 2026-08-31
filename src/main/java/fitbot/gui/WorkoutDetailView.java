@@ -13,6 +13,7 @@ import fitbot.model.Workout;
 import fitbot.model.WorkoutBlock;
 import fitbot.model.WorkoutSet;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -70,14 +71,17 @@ public class WorkoutDetailView extends ScrollPane {
             }
         }
         Button editButton = new Button("Edit");
-        editButton.setStyle("-fx-background-color: #487eb0; -fx-text-fill: #ffffff;"
+        editButton.setStyle("-fx-background-color: #70a1ff; -fx-text-fill: #ffffff;"
                 + " -fx-font-weight: bold;");
         editButton.setOnAction(event -> editAction.accept(position, workout));
         Button deleteButton = new Button("Delete");
-        deleteButton.setStyle("-fx-background-color: #e84118; -fx-text-fill: #ffffff;"
+        deleteButton.setStyle("-fx-background-color: #ff6b81; -fx-text-fill: #ffffff;"
                 + " -fx-font-weight: bold;");
         deleteButton.setOnAction(event -> deleteAction.accept(position));
-        card.getChildren().add(new HBox(8, editButton, deleteButton));
+        HBox actions = new HBox(8, editButton, deleteButton);
+        actions.setAlignment(Pos.CENTER_LEFT);
+        actions.setFillHeight(false);
+        card.getChildren().add(actions);
         setContent(card);
     }
 

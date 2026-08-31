@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.VBox?>
+<DialogPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="fitbot.gui.AddWorkoutController"
+            prefHeight="600.0" minHeight="600.0" maxHeight="600.0"
+            styleClass="custom-dialog-pane">
+    <buttonTypes><ButtonType fx:constant="CANCEL" /><ButtonType fx:constant="OK" /></buttonTypes>
+    <content>
+        <ScrollPane fitToWidth="true" prefViewportHeight="420.0" styleClass="edit-scroll-pane">
+            <content>
+                <VBox spacing="8" styleClass="dialog-content">
+                    <TextArea fx:id="errorArea" editable="false" wrapText="true" prefRowCount="2"
+                            promptText="Errors will be displayed here" styleClass="edit-error" />
+                    <VBox fx:id="blocksBox" spacing="8" />
+                    <GridPane hgap="10" vgap="8">
+                        <Label text="Date" GridPane.rowIndex="0" styleClass="dialog-label" />
+                        <TextField fx:id="date" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                        <Label text="Duration (seconds)" GridPane.rowIndex="1" styleClass="dialog-label" />
+                        <TextField fx:id="duration" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+        <Label text="Distance (km)" fx:id="distanceLabel" GridPane.rowIndex="2" styleClass="dialog-label" />
+        <TextField fx:id="distance" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+        <Label text="Elevation Gain (m)" fx:id="elevationLabel" GridPane.rowIndex="3"
+               style="-fx-text-fill: #ffffff; -fx-font-weight: bold; -fx-font-style: italic;" />
+                        <TextField fx:id="elevation" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+        <Label text="Maximum Speed" fx:id="maxLabel" GridPane.rowIndex="4"
+               style="-fx-text-fill: #ffffff; -fx-font-weight: bold; -fx-font-style: italic;" />
+                        <TextField fx:id="max" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                    </GridPane>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </content>
+</DialogPane>

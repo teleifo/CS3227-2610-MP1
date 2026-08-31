@@ -98,7 +98,11 @@ public final class ArgumentParser {
     /** Parses a date in ISO format, such as 2026-08-28. */
     public static LocalDate parseDate(String value) throws FitBotException {
         try {
-            return LocalDate.parse(value);
+            LocalDate date = LocalDate.parse(value);
+            if (date.isAfter(LocalDate.now())) {
+                throw new FitBotException("Date cannot be in the future.");
+            }
+            return date;
         } catch (DateTimeParseException exception) {
             throw new FitBotException("Invalid date. Use YYYY-MM-DD.");
         }

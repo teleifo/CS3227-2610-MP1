@@ -147,8 +147,7 @@ public class LogWorkoutCommand extends Command {
         for (String blockText : text.split(";", -1)) {
             String[] blockParts = blockText.split(":", 2);
             if (blockParts.length != 2 || blockParts[0].isBlank()) {
-                throw new FitBotException("Invalid block. "
-                        + "Use <exercise>:<sets>x<reps>@<kg> or <exercise>:<reps>@<kg>,<reps>@<kg>,...");
+                throw new FitBotException("Invalid block.");
             }
 
             String[] sets = blockParts[1].split(",", -1);
@@ -185,8 +184,7 @@ public class LogWorkoutCommand extends Command {
 
                 blocks.add(new WorkoutBlock(blockParts[0].trim(), parsedSets));
             } catch (IllegalArgumentException exception) {
-                throw new FitBotException("Invalid set entry '" + currentSet + "' in block '"
-                        + blockParts[0].trim() + "'.\nUse <reps>@<kg> or <sets>x<reps>@<kg>.");
+                throw new FitBotException("Invalid set entry in block '" + blockParts[0].trim() + "'");
             }
         }
 
