@@ -1,19 +1,16 @@
 package fitbot;
 
-import java.nio.file.Path;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
-import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 
 import fitbot.command.CommandResult;
 import fitbot.command.ParsedCommand;
 import fitbot.exception.FitBotException;
-import fitbot.model.Workout;
 import fitbot.parser.Parser;
-import fitbot.storage.WorkoutStorage;
+import fitbot.service.WorkoutService;
 
 /**
  * Entry point for the FitBot fitness tracker application.
@@ -31,14 +28,13 @@ public class FitBot {
     /** Text displayed between user input and FitBot's responses. */
     private static final String SEPARATOR = "============================================================";
 
-    /** Workouts logged during this application run. */
-    private final List<Workout> workouts;
-    private final WorkoutStorage storage = new WorkoutStorage(Path.of("data", "workouts.json"));
+    /** Shared application logic used by the current CLI and future GUI. */
+    private final WorkoutService service;
 
     /** Creates FitBot and loads previously saved workouts. */
     public FitBot() {
         try {
-            workouts = storage.loadWorkouts();
+            service = new WorkoutService();
         } catch (FitBotException exception) {
             throw new IllegalStateException(exception.getMessage(), exception);
         }
@@ -73,14 +69,9 @@ public class FitBot {
 
             try {
                 ParsedCommand parsedCommand = Parser.parseCommand(input);
-                CommandResult result = parsedCommand.getCommand()
-                        .execute(parsedCommand.getArguments(), workouts);
+                CommandResult result = service.execute(parsedCommand);
                 System.out.println(result.getMessage());
                 System.out.println(SEPARATOR);
-
-                if (result.wasDataModified()) {
-                    storage.saveWorkouts(workouts);
-                }
 
                 if (result.shouldExit()) {
                     break;
