@@ -3,7 +3,7 @@ layout: page
 title: User Guide
 ---
 
-FitBot is a **desktop fitness tracker for recording and reviewing workouts**. It provides a graphical user interface (GUI) with a command box for users who prefer to manage workouts using typed commands.
+FitBot is a desktop fitness tracker for recording and reviewing workouts. It provides a graphical user interface (GUI) with a command box for users who prefer to manage workouts using typed commands.
 
 ## Table of Contents
 
