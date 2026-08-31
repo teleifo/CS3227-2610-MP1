@@ -1,11 +1,19 @@
 package fitbot.model;
 
 import java.time.LocalDate;
-import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
  * Stores information shared by all workout types.
  */
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = RunWorkout.class, name = "RUN"),
+    @JsonSubTypes.Type(value = CycleWorkout.class, name = "CYCLE"),
+    @JsonSubTypes.Type(value = GymWorkout.class, name = "GYM")
+})
 public abstract class Workout {
     private LocalDate date;
     private long durationSeconds;
@@ -39,7 +47,4 @@ public abstract class Workout {
 
     /** Returns a display name for this workout type. */
     public abstract WorkoutType getType();
-
-    /** Returns additional fields that this workout type stores in JSON. */
-    public abstract Map<String, Object> getStorageFields();
 }
