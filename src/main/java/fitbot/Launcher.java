@@ -1,11 +1,17 @@
 package fitbot;
 
+import javafx.application.Application;
+
 /**
- * A launcher class to workaround classpath issues.
+ * Starts the FitBot graphical user interface.
  */
-public class Launcher {
+public final class Launcher {
+    /** Prevents instantiation of this entry-point class. */
+    private Launcher() {
+    }
+
+    /** Starts JavaFX and opens the main application window. */
     public static void main(String[] args) {
-        FitBot fitbot = new FitBot();
-        fitbot.start();
+        Application.launch(FitBotApplication.class, args);
     }
 }
