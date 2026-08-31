@@ -19,7 +19,7 @@ public class DeleteWorkoutCommand extends Command {
     public CommandResult execute(List<String> arguments, List<Workout> workouts)
             throws FitBotException {
         if (arguments.size() != 1) {
-            throw new FitBotException("Usage: " + getUsage() + "\nExample: " + getExample());
+            throw new FitBotException("Usage: " + getUsage() + "\n\nExample: " + getExample());
         }
 
         int position;

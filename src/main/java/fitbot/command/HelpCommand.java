@@ -28,7 +28,7 @@ public class HelpCommand extends Command {
                     .orElseThrow(() -> new FitBotException(
                             "Unknown command: " + keyword + "."));
             return new CommandResult(command.getKeyword() + "\n" + command.getDescription()
-                    + "\nUsage: " + command.getUsage() + "\nExample: " + command.getExample(), false);
+                    + "\n\nUsage: " + command.getUsage() + "\n\nExample: " + command.getExample(), false);
         }
 
         String commandDescriptions = Parser.getCommands().stream()

@@ -1,6 +1,7 @@
 package fitbot.model;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -18,9 +19,11 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "blocks"
 })
 public class GymWorkout extends Workout {
-    private static final Set<String> SUPPORTED_OPTIONS = Set.of(
+    private static final Set<String> SUPPORTED_LOG_OPTIONS = Set.of(
             "-type", "-date", "-duration", "-blocks");
-    private final List<WorkoutBlock> blocks;
+    private static final Set<String> SUPPORTED_EDIT_OPTIONS = Set.of(
+            "-type", "-date", "-duration", "-blocks", "-block", "-name", "-sets", "-set", "-reps", "-weight");
+    private List<WorkoutBlock> blocks;
 
     /** Creates a gym workout. */
     @JsonCreator
@@ -35,11 +38,23 @@ public class GymWorkout extends Workout {
     }
 
     public List<WorkoutBlock> getBlocks() {
-        return blocks;
+        return Collections.unmodifiableList(blocks);
     }
 
-    public static Set<String> getSupportedOptions() {
-        return SUPPORTED_OPTIONS;
+    /** Replaces every exercise block while preserving the workout metadata. */
+    public void replaceBlocks(List<WorkoutBlock> value) {
+        if (value == null || value.isEmpty()) {
+            throw new IllegalArgumentException("A gym workout needs at least one block.");
+        }
+        blocks = List.copyOf(value);
+    }
+
+    public static Set<String> getSupportedLogOptions() {
+        return SUPPORTED_LOG_OPTIONS;
+    }
+
+    public static Set<String> getSupportedEditOptions() {
+        return SUPPORTED_EDIT_OPTIONS;
     }
 
     @Override

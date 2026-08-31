@@ -26,13 +26,13 @@ public class LogWorkoutCommand extends Command {
     public LogWorkoutCommand() {
         super("log", "Log a workout.",
                 """
-                        (Run) log -type run -date <YYYY-MM-DD> -duration <seconds> -distance <kilometres> \
-                        [-elevation <metres>]
-                        (Cycle) log -type cycle -date <YYYY-MM-DD> -duration <seconds> -distance <kilometres> \
-                        [-elevation <metres>] [-max <km/hr>]
-                        (Gym) log -type gym -date <YYYY-MM-DD> -duration <seconds> -blocks \
-                        "<exercise>:<set-entry>,...;<exercise>:<set-entry>,..."
-                        - Set entries use <reps>@<kg> or <sets>x<reps>@<kg>.
+                        (Run) log -type run -date <YYYY-MM-DD> -duration <seconds>
+                        -distance <kilometres> [-elevation <metres>]
+                        (Cycle) log -type cycle -date <YYYY-MM-DD> -duration <seconds>
+                        -distance <kilometres> [-elevation <metres>] [-max <km/hr>]
+                        (Gym) log -type gym -date <YYYY-MM-DD> -duration <seconds>
+                        -blocks "<exercise>:<set-entry>,...;..."
+                        - Set entries use positive <reps>@<kg> or <sets>x<reps>@<kg>.
                         - Use commas for multiple sets and semicolons for multiple blocks.""",
                 """
                         (Run) log -type run -date 2026-09-01 -duration 1800 -distance 5
@@ -43,13 +43,13 @@ public class LogWorkoutCommand extends Command {
     public CommandResult execute(List<String> arguments, List<Workout> workouts)
             throws FitBotException {
         if (arguments.size() < 2) {
-            throw new FitBotException("Usage: " + getUsage() + "\nExample: " + getExample());
+            throw new FitBotException("Usage: " + getUsage() + "\n\nExample: " + getExample());
         }
 
         Map<String, String> options = ArgumentParser.parseOptions(arguments);
         Set<String> allSupportedOptions = new HashSet<>(RunWorkout.getSupportedOptions());
         allSupportedOptions.addAll(CycleWorkout.getSupportedOptions());
-        allSupportedOptions.addAll(GymWorkout.getSupportedOptions());
+        allSupportedOptions.addAll(GymWorkout.getSupportedLogOptions());
 
         for (String option : options.keySet()) {
             if (!allSupportedOptions.contains(option)) {
@@ -81,7 +81,7 @@ public class LogWorkoutCommand extends Command {
             break;
 
         case GYM:
-            supportedOptions = GymWorkout.getSupportedOptions();
+            supportedOptions = GymWorkout.getSupportedLogOptions();
             break;
 
         default:
@@ -142,8 +142,9 @@ public class LogWorkoutCommand extends Command {
      *
      * <p>Each block has the form {@code Exercise:set-entry,set-entry,...}.
      * A set entry such as {@code 8@70} records one set, while {@code 3x8@60}
-     * expands to three sets of eight repetitions at 60 kg. Mixed entries
-     * preserve their input order.</p>
+     * expands to three sets of eight repetitions at 60 kg. Repetition counts,
+     * set counts, and weights must be positive. Mixed entries preserve their
+     * input order.</p>
      *
      * @param text compact block notation supplied by the user
      * @return parsed exercise blocks in input order
@@ -160,9 +161,11 @@ public class LogWorkoutCommand extends Command {
             }
 
             String[] sets = blockParts[1].split(",", -1);
-            List<WorkoutSet> parsedSets = new java.util.ArrayList<>();
+            List<WorkoutSet> parsedSets = new ArrayList<>();
+            String currentSet = "";
             try {
                 for (String set : sets) {
+                    currentSet = set;
                     String[] values = set.split("@", 2);
                     if (values.length != 2) {
                         throw new NumberFormatException();
@@ -172,18 +175,27 @@ public class LogWorkoutCommand extends Command {
                     if (reps.length == 2) {
                         int count = Integer.parseInt(reps[0]);
                         int repetitions = Integer.parseInt(reps[1]);
+                        if (count <= 0 || repetitions <= 0) {
+                            throw new NumberFormatException();
+                        }
+
                         for (int i = 0; i < count; i++) {
                             parsedSets.add(new WorkoutSet(repetitions, Double.parseDouble(values[1])));
                         }
                     } else {
-                        parsedSets.add(new WorkoutSet(Integer.parseInt(values[0]),
-                                Double.parseDouble(values[1])));
+                        int repetitions = Integer.parseInt(values[0]);
+                        if (repetitions <= 0) {
+                            throw new NumberFormatException();
+                        }
+
+                        parsedSets.add(new WorkoutSet(repetitions, Double.parseDouble(values[1])));
                     }
                 }
 
                 blocks.add(new WorkoutBlock(blockParts[0].trim(), parsedSets));
             } catch (IllegalArgumentException exception) {
-                throw new FitBotException("Invalid set in block: " + blockText + ".");
+                throw new FitBotException("Invalid set entry '" + currentSet + "' in block '"
+                        + blockParts[0].trim() + "'.\nUse <reps>@<kg> or <sets>x<reps>@<kg>.");
             }
         }
 
