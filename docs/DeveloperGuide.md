@@ -296,7 +296,7 @@ Use case ends.
 
 **Main Success Scenario (MSS)**
 
-1. User provides the date, duration, distance, and optional elevation.
+1. User requests to add a running workout.
 2. FitBot validates the values and creates the running workout.
 3. FitBot calculates the running pace, saves the workout, and displays the result.
 
@@ -316,7 +316,7 @@ Use case ends.
 
 **Main Success Scenario (MSS)**
 
-1. User provides the date, duration, distance, and optional elevation and maximum speed.
+1. User requests to add a cycling workout.
 2. FitBot validates the values and creates the cycling workout.
 3. FitBot calculates the average speed, saves the workout, and displays the result.
 
@@ -335,7 +335,7 @@ Use case ends.
 
 **Main Success Scenario (MSS)**
 
-1. User provides the date, duration, exercise blocks, and sets.
+1. User requests to add a gym workout.
 2. FitBot validates the values and creates the gym workout.
 3. FitBot calculates total volume and estimated one-repetition maximums, saves the workout, and displays the result.
 
@@ -355,14 +355,18 @@ Use case ends.
 
 **Main Success Scenario (MSS)**
 
-1. User provides a workout's displayed list number.
-2. FitBot validates the number.
+1. User requests to view a specific workout.
+2. FitBot validates the user input.
 3. FitBot displays the workout's details and calculated metrics.
 
 Use case ends.
 
 **Extensions**
 
+* 1a. User selects a workout in the GUI list.
+  * 1a1. FitBot displays the selected workout's details in the detail view.
+* 1b. User enters `find <workout number>` in the command panel.
+  * 1b1. FitBot parses the workout number and displays the details in the command output.
 * 2a. User supplies a non-numeric or out-of-range workout number.
   * 2a1. FitBot displays an error and leaves the list unchanged.
   * Use case ends.
@@ -391,8 +395,8 @@ Use case ends.
 
 **Main Success Scenario (MSS)**
 
-1. User provides a running workout number and the fields to change.
-2. FitBot validates the number and new values.
+1. User requests to edit a running workout.
+2. FitBot validates the user input and new values.
 3. FitBot updates the workout, recalculates its pace, saves it, and displays the result.
 
 Use case ends.
@@ -409,8 +413,8 @@ Use case ends.
 
 **Main Success Scenario (MSS)**
 
-1. User provides a cycling workout number and the fields to change.
-2. FitBot validates the number and new values.
+1. User requests to edit a cycling workout.
+2. FitBot validates the user input and new values.
 3. FitBot updates the workout, recalculates its average speed, saves it, and displays the result.
 
 Use case ends.
@@ -427,8 +431,8 @@ Use case ends.
 
 **Main Success Scenario (MSS)**
 
-1. User provides a gym workout number and the fields, blocks, or sets to change.
-2. FitBot validates the number and new values.
+1. User requests to edit a gym workout.
+2. FitBot validates the user input and new values.
 3. FitBot updates the workout, recalculates its metrics, saves it, and displays the result.
 
 Use case ends.
@@ -445,8 +449,8 @@ Use case ends.
 
 **Main Success Scenario (MSS)**
 
-1. User provides a workout's displayed list number.
-2. FitBot validates the number and removes the workout.
+1. User requests to delete a workout.
+2. FitBot validates the user input and removes the workout.
 3. FitBot saves the updated list and displays a success message.
 
 Use case ends.
