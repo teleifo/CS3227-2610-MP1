@@ -527,9 +527,8 @@ The instructions below are a starting point. Testers should also perform explora
 
 ### Finding and filtering workouts
 
-<div markdown="span" class="alert alert-info">:information_source: <b>Note:</b>
+:information_source: **Note:**
 Command output is displayed in the command panel and does not change the GUI workout list. For example, `filter -type run` shows filtered results in the command output, but the GUI list continues to display its existing contents.
-</div>
 
 1. Enter `list` after logging the sample workouts. Expected: workouts are shown with one-based numbers.
 2. Enter `find 1`. Expected: all details and calculated metrics for workout 1 are displayed.

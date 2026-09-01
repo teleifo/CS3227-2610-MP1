@@ -166,9 +166,8 @@ Format: `bye`
 
 FitBot saves workout data automatically after a successful `log`, `edit`, or `delete` command. The data is stored in `data/workouts.json` relative to the folder from which FitBot is launched.
 
-<div markdown="span" class="alert alert-warning">:exclamation: **Caution:**
+:exclamation: **Caution:**
 Do not edit `workouts.json` unless you understand its JSON format. Invalid data may prevent FitBot from loading existing workouts. Make a backup before editing the file manually.
-</div>
 
 --------------------------------------------------------------------------------------------------------------------
 
